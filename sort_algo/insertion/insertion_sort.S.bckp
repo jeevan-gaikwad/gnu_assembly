@@ -1,0 +1,50 @@
+.section	.rodata
+p_str1:
+	.string "In for loop: key is:%d ,j:%d, i:%d\n"
+
+.section	.data
+.globl arr
+.type arr,@object
+.size arr,20
+.align 4
+arr:
+	.int 23,17,3,44,9
+.section	.bss
+	.comm i,4,4
+	.comm j,4,4
+	.comm key,4,4
+
+.section 	.text
+.globl main
+.type main,@function
+main:
+	pushl %ebp
+	movl %esp,%ebp
+
+	movl $1,j
+	jmp for_cond
+for:
+	movl j,%ebx
+	movl arr(,%ebx,4),%eax
+	movl %eax,key
+	subl $1,%ebx
+	movl %ebx,i
+
+	#display
+	pushl i
+	pushl j
+	pushl key
+	pushl $p_str1
+	call printf
+	addl $16,%esp
+
+	addl $1,j
+for_cond:
+	movl j,%ecx
+	cmpl $5,%ecx
+	jl for
+	
+	movl %ebp,%esp
+	popl %ebp
+	pushl $0
+	call exit
